@@ -9,7 +9,6 @@
  */
 
 class NewUserNotifier {
-
 	private $sender;
 	private $user;
 
@@ -34,6 +33,7 @@ class NewUserNotifier {
 	 */
 	private function sendExternalMails() {
 		global $wgNewUserNotifEmailTargets, $wgSitename;
+
 		foreach( $wgNewUserNotifEmailTargets as $target ) {
 			UserMailer::send(
 				new MailAddress( $target ),
@@ -49,8 +49,10 @@ class NewUserNotifier {
 	 */
 	private function sendInternalMails() {
 		global $wgNewUserNotifTargets, $wgSitename;
+
 		foreach( $wgNewUserNotifTargets as $userSpec ) {
 			$user = $this->makeUser( $userSpec );
+
 			if( $user instanceof User && $user->isEmailConfirmed() ) {
 				$user->sendMail(
 					$this->makeSubject( $user->getName(), $this->user ),
@@ -70,8 +72,11 @@ class NewUserNotifier {
 	private function makeUser( $spec ) {
 		$name = is_integer( $spec ) ? User::whoIs( $spec ) : $spec;
 		$user = User::newFromName( $name );
-		if( $user instanceof User && $user->getId() > 0 )
+
+		if( $user instanceof User && $user->getId() > 0 ) {
 			return $user;
+		}
+
 		return null;
 	}
 
@@ -83,12 +88,16 @@ class NewUserNotifier {
 	 */
 	private function makeSubject( $recipient, $user ) {
 		global $wgSitename;
-		$subjectLine = "";
+		$subjectLine = '';
+
 		// Avoid PHP 7.1 warning of passing $this by reference
 		$userNotif = $this;
-		Hooks::run( 'NewUserNotifSubject', array( &$userNotif, &$subjectLine, $wgSitename, $recipient, $user ) );
-		if (!strlen($subjectLine) )
+		Hooks::run( 'NewUserNotifSubject', [ &$userNotif, &$subjectLine, $wgSitename, $recipient, $user ] );
+
+		if ( !strlen( $subjectLine ) ) {
 			return wfMessage( 'newusernotifsubj', $wgSitename )->inContentLanguage()->text();
+		}
+
 		return $subjectLine;
 	}
 
@@ -100,11 +109,13 @@ class NewUserNotifier {
 	 */
 	private function makeMessage( $recipient, $user ) {
 		global $wgSitename, $wgContLang;
-		$messageBody = "";
+		$messageBody = '';
+
 		// Avoid PHP 7.1 warning of passing $this by reference
 		$userNotif = $this;
-		Hooks::run( 'NewUserNotifBody', array( &$userNotif, &$messageBody, $wgSitename, $recipient, $user ) );
-		if (!strlen($messageBody) )
+		Hooks::run( 'NewUserNotifBody', [ &$userNotif, &$messageBody, $wgSitename, $recipient, $user ] );
+
+		if ( !strlen( $messageBody ) )
 			return wfMessage(
 				'newusernotifbody',
 				$recipient,
@@ -114,6 +125,7 @@ class NewUserNotifier {
 				$wgContLang->date( wfTimestampNow() ),
 				$wgContLang->time( wfTimestampNow() )
 			)->inContentLanguage()->text();
+
 		return $messageBody;
 	}
 
@@ -123,9 +135,10 @@ class NewUserNotifier {
 	 * @param User $user User that was created
 	 * @return bool
 	 */
-	public static function hook( $user ) {
+	public static function onLocalUserCreated( $user ) {
 		$notifier = new self();
 		$notifier->execute( $user );
+
 		return true;
 	}
 }
