@@ -1,0 +1,22 @@
+{
+	"name": "New User Email Notification",
+	"version": "1.6.1",
+	"author": "Rob Church",
+	"license-name": "GPL-2.0-or-later",
+	"url": "https://www.mediawiki.org/wiki/Extension:New_User_Email_Notification",
+	"descriptionmsg": "newusernotif-desc",
+	"type": "other",
+	"callback": "NewUserNotifier::onRegistration",
+	"MessagesDirs": {
+		"NewUserNotif": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"NewUserNotifier": "NewUserNotif.class.php"
+	},
+	"Hooks": {
+		"LocalUserCreated": "NewUserNotifier::onLocalUserCreated"
+	},
+	"manifest_version": 2
+}
