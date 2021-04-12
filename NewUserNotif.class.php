@@ -129,6 +129,25 @@ class NewUserNotifier {
 		return $messageBody;
 	}
 
+	public static function onRegistration() {
+		global $wgNewUserNotifSender, $wgNewUserNotifTargets, $wgNewUserNotifEmailTargets, $wgPasswordSender;
+
+		/**
+		 * Email address to use as the sender
+		 */
+		$wgNewUserNotifSender = $wgPasswordSender;
+
+		/**
+		 * Users who should receive notification mails
+		 */
+		$wgNewUserNotifTargets[] = 1;
+
+		/**
+		 * Additional email addresses to send mails to
+		 */
+		$wgNewUserNotifEmailTargets = [];
+	}
+
 	/**
 	 * Hook account creation
 	 *
