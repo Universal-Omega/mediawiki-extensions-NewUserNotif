@@ -7,6 +7,9 @@
 	"descriptionmsg": "newusernotif-desc",
 	"type": "other",
 	"callback": "NewUserNotifier::onRegistration",
+	"requires": {
+		"MediaWiki": ">= 1.35.0"
+	},
 	"MessagesDirs": {
 		"NewUserNotif": [
 			"i18n"
